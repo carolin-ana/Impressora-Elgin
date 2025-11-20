@@ -3,12 +3,14 @@
 Este projeto demonstra como integrar aplicações Java com impressoras utilizando uma DLL nativa e a biblioteca JNA (Java Native Access).
 A aplicação oferece um menu interativo no terminal, permitindo executar operações de impressão, status, abertura de gaveta e leitura de XML SAT.
 
+
 🚀 Funcionalidades
 
 🔧 Conexão
 - Configurar parâmetros de comunicação
 - Abrir conexão com a impressora
 - Fechar conexão
+
 
 🖨 Impressão
 - Impressão de texto
@@ -17,10 +19,12 @@ A aplicação oferece um menu interativo no terminal, permitindo executar opera�
 - Impressão de XML SAT
 - Impressão de XML de cancelamento SAT
 
+
 💵 Hardware
 - Abertura de gaveta Elgin
 - Abertura de gaveta via pino
 - Sinal sonoro da impressora
+
 
 📚 Tecnologias utilizadas
 
@@ -28,6 +32,7 @@ A aplicação oferece um menu interativo no terminal, permitindo executar opera�
 - JNA – Java Native Access
 - Arquivo DLL nativo da impressora
 - Input via Scanner
+
 
 📁 Estrutura do projeto
 Main.java
@@ -37,6 +42,7 @@ Main.java
 └── Controle de conexão       → Abrir/fechar e configurar
 └── Funções adicionais        → Abrir gaveta, beep, etc.
 └── Menu interativo
+
 
 🔌 Configuração da DLL
 
@@ -50,12 +56,16 @@ ImpressoraDLL INSTANCE = (ImpressoraDLL) Native.load(
 
 👉 Importante: Ajuste o caminho para o local correto da DLL em seu computador.
 
+
+
 ▶️ Como executar
 1. Compile o projeto:
 javac Main.java
 
+
 2. Execute:
 java Main
+
 
 3. Use o menu:
 1  - Configurar Conexao
@@ -70,20 +80,25 @@ java Main
 10 - Sinal Sonoro
 0  - Fechar Conexao e Sair
 
+
 🧩 Exemplos de uso
 Impressão de texto
 ImpressoraDLL.INSTANCE.ImpressaoTexto("Teste de impressao", 1, 4, 0);
 
+
 Impressão de QRCode
 ImpressoraDLL.INSTANCE.ImpressaoQRCode("Texto do QRCode", 6, 4);
 
+
 Impressão de XML SAT
 int ret = ImpressoraDLL.INSTANCE.ImprimeXMLSAT("path=C:\\XMLSAT.xml", 0);
+
 
 ⚠️ Observações importantes
 
 - Algumas chamadas atualmente usam valores fixos como teste.
 - A DLL deve ser compatível com seu modelo de impressora.
+
 
 📝 Autor
 
