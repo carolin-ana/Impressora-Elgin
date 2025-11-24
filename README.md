@@ -2,6 +2,13 @@
 
 Este projeto demonstra como integrar aplicações Java com impressoras utilizando uma DLL nativa e a biblioteca JNA (Java Native Access).
 A aplicação oferece um menu interativo no terminal, permitindo executar operações de impressão, status, abertura de gaveta e leitura de XML SAT.
+O sistema permite que o usuário:
+
+ - Abra e feche conexões com impressoras (USB, RS232, TCP/IP, Bluetooth ou impressoras embarcadas em Android);
+- Execute comandos de impressão de texto, códigos de barras e QR Code;
+- Controle funções da impressora, como corte, avanço de papel e alerta sonoro;
+- Carregue arquivos externos (como XML ou texto) para impressão;
+- Realize testes e diagnósticos básicos.
 
 
 🚀 Funcionalidades
@@ -28,20 +35,122 @@ A aplicação oferece um menu interativo no terminal, permitindo executar opera�
 
 📚 Tecnologias utilizadas
 
-- Java 8+
-- JNA – Java Native Access
-- Arquivo DLL nativo da impressora
-- Input via Scanner
+- Java
+- JNA (Java Native Access) – para carregar e chamar funções da DLL
+- I/O Java – leitura de arquivos
+- DLL proprietária – E1_Impressora01.dll
 
 
-📁 Estrutura do projeto
-Main.java
-│
-└── Interface ImpressoraDLL  → Mapeamento da DLL via JNA
-└── Métodos de impressão      → Texto, QRCode, código de barras, XML
-└── Controle de conexão       → Abrir/fechar e configurar
-└── Funções adicionais        → Abrir gaveta, beep, etc.
-└── Menu interativo
+🗂️ Estrutura Geral
+1. Interface ImpressoraDLL
+
+Define as funções importadas da DLL usando JNA.
+
+public interface ImpressoraDLL extends Library {
+    ImpressoraDLL INSTANCE = (ImpressoraDLL) Native.load(
+        "C:\\...\\E1_Impressora01.dll",
+        ImpressoraDLL.class
+    );
+}
+
+
+Através dessa interface, o Java pode chamar funções escritas em C/C++ presentes na DLL.
+
+🔌 2. Abertura de Conexão
+
+Método chamado antes de qualquer impressão.
+
+Função da DLL:
+
+int AbreConexaoImpressora(int tipo, String modelo, String conexao, int parametro);
+
+
+O sistema solicita ao usuário:
+- Tipo de comunicação (USB, RS232, TCP/IP, Bluetooth, Android)
+- Modelo da impressora
+- Tipo de conexão
+- Parâmetros adicionais (porta, IP, baud rate etc.)
+- Se o retorno for 0, a conexão foi aberta com sucesso.
+
+❌ 3. Fechamento da Conexão
+
+Chamado após a finalização das operações:
+
+int FechaConexaoImpressora();
+
+📝 4. Impressão de Texto
+
+O texto pode ser digitado ou carregado de arquivo:
+- Avança papel
+- Envia conteúdo para a DLL:
+
+ImpressoraDLL.INSTANCE.ImprimeTexto(texto, alinhamento, estilo, tamanho);
+
+
+- Realiza corte ao final
+
+📦 5. Impressão de Arquivo (ex.: XML, texto)
+
+Arquivo é lido:
+
+private static String lerArquivoComoString(String path)
+
+
+Conteúdo impresso pela DLL.
+
+🧾 6. Impressão de Código de Barras
+
+Funções para código de barras:
+
+ImpressoraDLL.INSTANCE.ImpressaoCodigoBarras(codigo, tipo, altura, largura, HRI);
+
+🔳 7. Impressão de QR Code
+
+Função típica:
+
+ImpressoraDLL.INSTANCE.ImpressaoQRCode(conteudo, tamanho, correcao);
+
+🔔 8. Sinal Sonoro
+
+Chama a função da DLL para emitir aviso sonoro:
+
+ImpressoraDLL.INSTANCE.SinalSonoro();
+
+🔍 9. Testes e Diagnósticos
+
+O código possui opções para:
+- Teste de impressão rápida
+- Verificação de status
+- Avanço de papel
+- Corte
+
+Sempre verificando o retorno da DLL:
+
+if (ret == 0) System.out.println("Ok");
+else System.out.println("Erro. Retorno: " + ret);
+
+📌 Fluxo Geral do Programa
+
+- Usuário escolhe o tipo de comunicação
+- Abre conexão com a DLL
+  
+Seleciona tipo de operação:
+- Imprimir texto
+- Imprimir arquivo
+- Código de barras
+- QR Code
+- Corte
+- Avanço
+- Sinal sonoro
+- Realiza operação
+- Fecha conexão
+
+📈 Pontos Importantes
+
+- Nenhuma função da DLL pode ser chamada sem antes abrir conexão.
+- Cada comando retorna um código de status, onde 0 = sucesso.
+- O sistema utiliza Scanner para entrada de dados no console.
+- Alguns recursos são dependentes do modelo da impressora.
 
 
 🔌 Configuração da DLL
@@ -81,25 +190,15 @@ java Main
 0  - Fechar Conexao e Sair
 
 
-🧩 Exemplos de uso
-Impressão de texto
-ImpressoraDLL.INSTANCE.ImpressaoTexto("Teste de impressao", 1, 4, 0);
-
-
-Impressão de QRCode
-ImpressoraDLL.INSTANCE.ImpressaoQRCode("Texto do QRCode", 6, 4);
-
-
-Impressão de XML SAT
-int ret = ImpressoraDLL.INSTANCE.ImprimeXMLSAT("path=C:\\XMLSAT.xml", 0);
-
-
 ⚠️ Observações importantes
 
 - Algumas chamadas atualmente usam valores fixos como teste.
 - A DLL deve ser compatível com seu modelo de impressora.
 
 
-📝 Autor
+📝 Autores
 
 Projeto para fins acadêmicos, estudo de integração Java ↔ DLL através de JNA.
+- Ana Carolina 223642
+- Dennys Oliveira 053283
+- Yasmin Gabrielly 078013
