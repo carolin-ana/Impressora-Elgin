@@ -48,7 +48,7 @@ Define as funções importadas da DLL usando JNA.
 
 public interface ImpressoraDLL extends Library {
     ImpressoraDLL INSTANCE = (ImpressoraDLL) Native.load(
-        "C:\\...\\E1_Impressora01.dll",
+        "Diretório do arquivo DLL",
         ImpressoraDLL.class
     );
 }
@@ -71,6 +71,7 @@ O sistema solicita ao usuário:
 - Tipo de conexão
 - Parâmetros adicionais (porta, IP, baud rate etc.)
 - Se o retorno for 0, a conexão foi aberta com sucesso.
+- Caso a conexão não seja estabelecida, retorna o código de erro. Veja documentação: [LINK]
 
 ❌ 3. Fechamento da Conexão
 
@@ -81,13 +82,10 @@ int FechaConexaoImpressora();
 📝 4. Impressão de Texto
 
 O texto pode ser digitado ou carregado de arquivo:
-- Avança papel
-- Envia conteúdo para a DLL:
 
-ImpressoraDLL.INSTANCE.ImprimeTexto(texto, alinhamento, estilo, tamanho);
+Função responsável:
+ImpressoraDLL.INSTANCE.ImpressaoTexto(texto, alinhamento, estilo, tamanho);
 
-
-- Realiza corte ao final
 
 📦 5. Impressão de Arquivo (ex.: XML, texto)
 
@@ -151,21 +149,9 @@ Seleciona tipo de operação:
 - Cada comando retorna um código de status, onde 0 = sucesso.
 - O sistema utiliza Scanner para entrada de dados no console.
 - Alguns recursos são dependentes do modelo da impressora.
-
-
-🔌 Configuração da DLL
-
-A DLL é carregada diretamente via JNA:
-
-ImpressoraDLL INSTANCE = (ImpressoraDLL) Native.load(
-    "C:\\caminho\\para\\E1_Impressora01.dll",
-    ImpressoraDLL.class
-);
-
-
-👉 Importante: Ajuste o caminho para o local correto da DLL em seu computador.
-
-
+- Ajuste o caminho para o local correto da DLL em seu computador.
+- Algumas chamadas atualmente usam valores fixos como teste.
+- A DLL deve ser compatível com seu modelo de impressora.
 
 ▶️ Como executar
 1. Compile o projeto:
@@ -188,12 +174,6 @@ java Main
 9  - Abrir Gaveta
 10 - Sinal Sonoro
 0  - Fechar Conexao e Sair
-
-
-⚠️ Observações importantes
-
-- Algumas chamadas atualmente usam valores fixos como teste.
-- A DLL deve ser compatível com seu modelo de impressora.
 
 
 📝 Autores
